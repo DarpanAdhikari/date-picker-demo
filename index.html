@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>drp-datepicker — feature demo</title>
+ <link rel="icon" href="https://darpanadhikari.com.np/images/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="page-head">
+    <h1>drp-datepicker</h1>
+    <p>A minimal demo of every feature in the package — open this file directly, no build step, no server.</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>1. Nepali-first picker <span class="tag">type="bs" (default)</span></h2>
+      <p>English date shown small, bottom-right of each cell. Holidays and a <code>min</code>/<code>max</code> range are set below.</p>
+      <drp-datepicker id="p1" placeholder="Select a date" min="2082-01-01" max="2082-12-30"></drp-datepicker>
+      <pre id="out1">(no selection yet)</pre>
+    </section>
+
+    <section class="card">
+      <h2>2. English-first picker <span class="tag">type="ad"</span></h2>
+      <p>Same component, flipped: English calendar drives the grid, Nepali date shown small, bottom-right.</p>
+      <drp-datepicker id="p2" type="ad" placeholder="Select a date"></drp-datepicker>
+      <pre id="out2">(no selection yet)</pre>
+    </section>
+
+    <section class="card">
+      <h2>3. Inline calendar + Devanagari digits</h2>
+      <p><code>inline</code> renders the calendar open in the page flow. <code>digits="ne"</code> starts it in Devanagari numerals (toggleable from the calendar footer either way).</p>
+      <drp-datepicker id="p3" inline digits="ne"></drp-datepicker>
+    </section>
+
+    <section class="card">
+      <h2>4. Real &lt;form&gt; integration</h2>
+      <p><code>name</code> + <code>required</code> behave like a native input — picked up by <code>FormData</code>, blocks submit until filled.</p>
+      <form id="bookingForm">
+        <label for="guestName">Guest name</label>
+        <input id="guestName" name="guestName" required placeholder="Jane Doe" />
+
+        <label for="p4">Check-in date</label>
+        <drp-datepicker id="p4" name="checkinDate" required placeholder="Pick a date"></drp-datepicker>
+
+        <button type="submit">Submit booking</button>
+      </form>
+      <pre id="out4">(nothing submitted yet)</pre>
+    </section>
+
+    <section class="card">
+      <h2>5. Core conversion API — no UI, just the engine</h2>
+      <p>Everything above runs on <code>DrpNepaliCalendar</code> underneath. Use it directly for pure date logic.</p>
+      <div class="grid-2">
+        <div>
+          <label for="bsInput">Nepali date (BS)</label>
+          <input id="bsInput" placeholder="2082-02-27" value="2082-02-27" />
+          <button id="convertToAd">Convert → English</button>
+        </div>
+        <div>
+          <label for="adInput">English date (AD)</label>
+          <input id="adInput" placeholder="2025-06-10" value="2025-06-10" />
+          <button id="convertToBs">Convert → Nepali</button>
+        </div>
+      </div>
+      <pre id="out5">(convert a date above)</pre>
+      <button id="showFiscalYear">Show current fiscal year</button>
+      <pre id="out5b"></pre>
+    </section>
+
+    <section class="card">
+      <h2>6. Build-your-own calendar grid</h2>
+      <p><code>get_calendar_month_nep()</code> / <code>get_calendar_month_eng()</code> hand back every day of a month, in both calendars, ready to render — this mini grid below is built from nothing but that one call.</p>
+      <div class="grid-2">
+        <div>
+          <label for="bsMonthInput">Nepali month (YYYY-MM)</label>
+          <input id="bsMonthInput" placeholder="2083-03" value="2083-03" />
+          <button id="loadBsMonth">Load BS month</button>
+        </div>
+        <div>
+          <label for="adMonthInput">English month (YYYY-MM)</label>
+          <input id="adMonthInput" placeholder="2026-06" value="2026-06" />
+          <button id="loadAdMonth">Load AD month</button>
+        </div>
+      </div>
+      <div id="monthGrid" class="month-grid"></div>
+    </section>
+
+  </main>
+
+ <!-- Footer -->
+    <footer>
+      <span
+        ><i>&copy;</i><span id="date"></span
+        ><a href="https://darpanadhikari.com.np" target="_blank">
+          DarpanAdhikari</a
+        >
+        || All right reserved</span
+      >
+    </footer>
+
+  <script src="https://unpkg.com/drp-datepicker@1.0.0/dist/drp-datepicker.global.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
