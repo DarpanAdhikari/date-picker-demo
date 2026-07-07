@@ -4,8 +4,8 @@ const cal = new DrpNepaliCalendar();
 // ── 1. Nepali-first picker ────────────────────────────────────────────────
 const p1 = document.getElementById('p1');
 p1.holidays = [
-  { date: '2082-01-01', label: 'Nepali New Year' },
-  { date: '2082-07-10', label: 'Vijaya Dashami' },
+  { date: '2083-01-01', label: 'Nepali New Year' },
+  { date: '2083-07-10', label: 'Vijaya Dashami' },
 ];
 p1.addEventListener('change', (e) => {
   document.getElementById('out1').textContent = JSON.stringify(e.detail, null, 2);
