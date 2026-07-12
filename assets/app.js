@@ -3,10 +3,87 @@ const cal = new DrpNepaliCalendar();
 
 // ── 1. Nepali-first picker ────────────────────────────────────────────────
 const p1 = document.getElementById('p1');
+const now = new Date();
+const bs = cal.eng_to_nep(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    now.getDate()
+);
+if (!bs) {
+    throw new Error("Couldn't convert current date.");
+}
+const year =
+    bs.bs_year ??
+    bs.year ??
+    bs.y;
+
+const month =
+    bs.bs_month ??
+    bs.month ??
+    bs.m;
+
+const day =
+    bs.bs_date ??
+    bs.day ??
+    bs.date ??
+    bs.d;
+const pad = n => String(n).padStart(2, "0");
+function daysInMonth(y, m) {
+    const info = cal.get_calendar_month_nep(
+        `${y}-${pad(m)}`
+    );
+    return info.days.length;
+}
+
+// Previous month
+let minYear = year;
+let minMonth = month - 1;
+
+if (minMonth < 1) {
+    minMonth = 12;
+    minYear--;
+}
+
+// Next month
+let maxYear = year;
+let maxMonth = month + 1;
+
+if (maxMonth > 12) {
+    maxMonth = 1;
+    maxYear++;
+}
+
+const minDate =
+    Math.floor(Math.random() * daysInMonth(minYear, minMonth)) + 1;
+
+const maxDate =
+    Math.floor(Math.random() * daysInMonth(maxYear, maxMonth)) + 1;
+
+// Set picker limits
+p1.setAttribute('min',`${minYear}-${pad(minMonth)}-${pad(minDate)}`);
+p1.setAttribute('max',`${maxYear}-${pad(maxMonth)}-${pad(maxDate)}`);
+
+// Two random holidays in current month
+const totalDays = daysInMonth(year, month);
+
+const h1 = Math.floor(Math.random() * totalDays) + 1;
+
+let h2;
+do {
+    h2 = Math.floor(Math.random() * totalDays) + 1;
+} while (h1 === h2);
+
 p1.holidays = [
-  { date: '2083-01-01', label: 'Nepali New Year' },
-  { date: '2083-07-10', label: 'Vijaya Dashami' },
+    {
+        date: `${year}-${pad(month)}-${pad(h1)}`,
+        label: "Demo Holiday 1",
+    },
+    {
+        date: `${year}-${pad(month)}-${pad(h2)}`,
+        label: "Demo Holiday 2",
+    },
 ];
+
 p1.addEventListener('change', (e) => {
   document.getElementById('out1').textContent = JSON.stringify(e.detail, null, 2);
 });
