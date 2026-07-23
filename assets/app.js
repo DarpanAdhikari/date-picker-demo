@@ -3,87 +3,10 @@ const cal = new DrpNepaliCalendar();
 
 // ── 1. Nepali-first picker ────────────────────────────────────────────────
 const p1 = document.getElementById('p1');
-const now = new Date();
-const bs = cal.eng_to_nep(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    now.getDate()
-);
-if (!bs) {
-    throw new Error("Couldn't convert current date.");
-}
-const year =
-    bs.bs_year ??
-    bs.year ??
-    bs.y;
-
-const month =
-    bs.bs_month ??
-    bs.month ??
-    bs.m;
-
-const day =
-    bs.bs_date ??
-    bs.day ??
-    bs.date ??
-    bs.d;
-const pad = n => String(n).padStart(2, "0");
-function daysInMonth(y, m) {
-    const info = cal.get_calendar_month_nep(
-        `${y}-${pad(m)}`
-    );
-    return info.days.length;
-}
-
-// Previous month
-let minYear = year;
-let minMonth = month - 1;
-
-if (minMonth < 1) {
-    minMonth = 12;
-    minYear--;
-}
-
-// Next month
-let maxYear = year;
-let maxMonth = month + 1;
-
-if (maxMonth > 12) {
-    maxMonth = 1;
-    maxYear++;
-}
-
-const minDate =
-    Math.floor(Math.random() * daysInMonth(minYear, minMonth)) + 1;
-
-const maxDate =
-    Math.floor(Math.random() * daysInMonth(maxYear, maxMonth)) + 1;
-
-// Set picker limits
-p1.setAttribute('min',`${minYear}-${pad(minMonth)}-${pad(minDate)}`);
-p1.setAttribute('max',`${maxYear}-${pad(maxMonth)}-${pad(maxDate)}`);
-
-// Two random holidays in current month
-const totalDays = daysInMonth(year, month);
-
-const h1 = Math.floor(Math.random() * totalDays) + 1;
-
-let h2;
-do {
-    h2 = Math.floor(Math.random() * totalDays) + 1;
-} while (h1 === h2);
-
 p1.holidays = [
-    {
-        date: `${year}-${pad(month)}-${pad(h1)}`,
-        label: "Demo Holiday 1",
-    },
-    {
-        date: `${year}-${pad(month)}-${pad(h2)}`,
-        label: "Demo Holiday 2",
-    },
+  { date: '2083-01-01', label: 'Nepali New Year' },
+  { date: '2083-04-15', label: 'Demo Holiday' },
 ];
-
 p1.addEventListener('change', (e) => {
   document.getElementById('out1').textContent = JSON.stringify(e.detail, null, 2);
 });
@@ -96,19 +19,40 @@ p2.addEventListener('change', (e) => {
 
 // ── 3. Inline + Devanagari digits — no extra wiring needed, just attributes
 
-// ── 4. Real <form> integration ────────────────────────────────────────────
+// ── 4. First day of week — no extra wiring needed, just attributes
+
+// ── 5. Display format — no extra wiring needed, just attributes
+
+// ── 6. Custom disabled dates ──────────────────────────────────────────────
+const p6 = document.getElementById('p6');
+const pad = (n) => String(n).padStart(2, '0');
+const now = new Date();
+const bsToday = cal.eng_to_nep(now.getFullYear(), now.getMonth() + 1, now.getDate());
+const cy = bsToday.year;
+const cm = bsToday.month;
+const daysIn = cal.get_calendar_month_nep(cy, cm).days;
+const disabled = [];
+daysIn.forEach((d) => {
+  if (d.weekday === 7) disabled.push({ date: d.bs_date, label: 'Saturday' });
+  if (d.bs_day === 15) disabled.push({ date: d.bs_date, label: 'Monthly cutoff' });
+  if (d.bs_day === 1) disabled.push({ date: d.bs_date, label: 'Month start' });
+});
+p6.disabledDates = disabled;
+document.getElementById('out6').textContent = `Disabled ${disabled.length} date(s) this month (Saturdays + 1st & 15th).`;
+
+// ── 7. Real <form> integration ────────────────────────────────────────────
 const bookingForm = document.getElementById('bookingForm');
 bookingForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const data = new FormData(bookingForm);
-  document.getElementById('out4').textContent = JSON.stringify(Object.fromEntries(data), null, 2);
+  document.getElementById('out7').textContent = JSON.stringify(Object.fromEntries(data), null, 2);
 });
 
-// ── 5. Core conversion playground ─────────────────────────────────────────
+// ── 8. Core conversion playground ─────────────────────────────────────────
 document.getElementById('convertToAd').addEventListener('click', () => {
   const [y, m, d] = document.getElementById('bsInput').value.split('-').map(Number);
   const result = cal.nep_to_eng(y, m, d);
-  document.getElementById('out5').textContent = result
+  document.getElementById('out8').textContent = result
     ? JSON.stringify(result, null, 2)
     : `Invalid or out-of-range BS date. ${cal.debug_info}`;
 });
@@ -116,19 +60,19 @@ document.getElementById('convertToAd').addEventListener('click', () => {
 document.getElementById('convertToBs').addEventListener('click', () => {
   const [y, m, d] = document.getElementById('adInput').value.split('-').map(Number);
   const result = cal.eng_to_nep(y, m, d);
-  document.getElementById('out5').textContent = result
+  document.getElementById('out8').textContent = result
     ? JSON.stringify(result, null, 2)
     : `Invalid or out-of-range AD date. ${cal.debug_info}`;
 });
 
 document.getElementById('showFiscalYear').addEventListener('click', () => {
-  document.getElementById('out5b').textContent = JSON.stringify(cal.get_current_fiscal_year(), null, 2);
+  document.getElementById('out8b').textContent = JSON.stringify(cal.get_current_fiscal_year(), null, 2);
 });
 
-// ── 6. Build-your-own calendar grid ───────────────────────────────────────
+// ── 9. Build-your-own calendar grid ───────────────────────────────────────
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-function renderMonthGrid(monthInfo, { primaryKey, primaryDayKey, secondaryDayKey }) {
+function renderMonthGrid(monthInfo, { primaryDayKey, secondaryDayKey }) {
   const container = document.getElementById('monthGrid');
   container.innerHTML = '';
 
@@ -176,3 +120,6 @@ document.getElementById('loadAdMonth').addEventListener('click', () => {
 
 // Load an initial grid so the section isn't empty on first paint
 document.getElementById('loadBsMonth').click();
+
+// Footer year
+document.getElementById('footerYear').textContent = ` ${new Date().getFullYear()} `;

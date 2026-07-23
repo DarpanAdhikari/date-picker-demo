@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>drp-datepicker — feature demo</title>
- <link rel="icon" href="https://darpanadhikari.com.np/images/logo.ico" type="image/x-icon">
+<link rel="icon" href="https://darpanadhikari.com.np/images/logo.ico" type="image/x-icon">
 <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -18,6 +18,7 @@
     <section class="card">
       <h2>1. Nepali-first picker <span class="tag">type="bs" (default)</span></h2>
       <p>English date shown small, bottom-right of each cell. Holidays and a <code>min</code>/<code>max</code> range are set below.</p>
+      <pre class="code-snippet">&lt;drp-datepicker placeholder="Select a date" min="2083-01-01" max="2083-02-30"&gt;&lt;/drp-datepicker&gt;</pre>
       <drp-datepicker id="p1" placeholder="Select a date" min="2083-01-01" max="2083-02-30"></drp-datepicker>
       <pre id="out1">(no selection yet)</pre>
     </section>
@@ -25,6 +26,7 @@
     <section class="card">
       <h2>2. English-first picker <span class="tag">type="ad"</span></h2>
       <p>Same component, flipped: English calendar drives the grid, Nepali date shown small, bottom-right.</p>
+      <pre class="code-snippet">&lt;drp-datepicker type="ad" placeholder="Select a date"&gt;&lt;/drp-datepicker&gt;</pre>
       <drp-datepicker id="p2" type="ad" placeholder="Select a date"></drp-datepicker>
       <pre id="out2">(no selection yet)</pre>
     </section>
@@ -32,26 +34,69 @@
     <section class="card">
       <h2>3. Inline calendar + Devanagari digits</h2>
       <p><code>inline</code> renders the calendar open in the page flow. <code>digits="ne"</code> starts it in Devanagari numerals (toggleable from the calendar footer either way).</p>
+      <pre class="code-snippet">&lt;drp-datepicker inline digits="ne"&gt;&lt;/drp-datepicker&gt;</pre>
       <drp-datepicker id="p3" inline digits="ne"></drp-datepicker>
     </section>
 
     <section class="card">
-      <h2>4. Real &lt;form&gt; integration</h2>
+      <h2>4. First day of week <span class="tag">first-day-of-week</span></h2>
+      <p>Control which day starts the week. Default is Sunday (<code>0</code>); set <code>first-day-of-week="1"</code> for Monday, <code>"6"</code> for Saturday, etc.</p>
+      <div class="grid-3">
+        <div>
+          <pre class="code-snippet">first-day-of-week="0"<br/>(Sunday — default)</pre>
+          <drp-datepicker id="p4a" first-day-of-week="0" placeholder="Pick a date"></drp-datepicker>
+        </div>
+        <div>
+          <pre class="code-snippet">first-day-of-week="1"<br/>(Monday)</pre>
+          <drp-datepicker id="p4b" first-day-of-week="1" placeholder="Pick a date"></drp-datepicker>
+        </div>
+        <div>
+          <pre class="code-snippet">first-day-of-week="6"<br/>(Saturday)</pre>
+          <drp-datepicker id="p4c" first-day-of-week="6" placeholder="Pick a date"></drp-datepicker>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. Display format <span class="tag">format</span></h2>
+      <p>Customize how the selected date appears in the input. Tokens: <code>YYYY</code>, <code>YY</code>, <code>MMMM</code>, <code>MM</code>, <code>M</code>, <code>DD</code>, <code>D</code>.</p>
+      <div class="grid-2">
+        <div>
+          <pre class="code-snippet">format="YYYY-MM-DD"</pre>
+          <drp-datepicker id="p5a" format="YYYY-MM-DD" placeholder="YYYY-MM-DD"></drp-datepicker>
+        </div>
+        <div>
+          <pre class="code-snippet">format="DD Month YYYY"</pre>
+          <drp-datepicker id="p5b" format="DD Month YYYY" placeholder="DD Month YYYY"></drp-datepicker>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6. Custom disabled dates <span class="tag">disabledDates</span></h2>
+      <p>Block specific dates via the <code>.disabledDates</code> property. Below, Saturdays and a few holidays are disabled.</p>
+      <pre class="code-snippet">picker.disabledDates = [{date: '…'}, {date: '…'}]</pre>
+      <drp-datepicker id="p6" placeholder="Select a date"></drp-datepicker>
+      <pre id="out6"></pre>
+    </section>
+
+    <section class="card">
+      <h2>7. Real &lt;form&gt; integration</h2>
       <p><code>name</code> + <code>required</code> behave like a native input — picked up by <code>FormData</code>, blocks submit until filled.</p>
       <form id="bookingForm">
         <label for="guestName">Guest name</label>
         <input id="guestName" name="guestName" required placeholder="Jane Doe" />
 
-        <label for="p4">Check-in date</label>
-        <drp-datepicker id="p4" name="checkinDate" required placeholder="Pick a date"></drp-datepicker>
+        <label for="p7">Check-in date</label>
+        <drp-datepicker id="p7" name="checkinDate" required placeholder="Pick a date"></drp-datepicker>
 
         <button type="submit">Submit booking</button>
       </form>
-      <pre id="out4">(nothing submitted yet)</pre>
+      <pre id="out7">(nothing submitted yet)</pre>
     </section>
 
     <section class="card">
-      <h2>5. Core conversion API — no UI, just the engine</h2>
+      <h2>8. Core conversion API — no UI, just the engine</h2>
       <p>Everything above runs on <code>DrpNepaliCalendar</code> underneath. Use it directly for pure date logic.</p>
       <div class="grid-2">
         <div>
@@ -65,13 +110,13 @@
           <button id="convertToBs">Convert → Nepali</button>
         </div>
       </div>
-      <pre id="out5">(convert a date above)</pre>
+      <pre id="out8">(convert a date above)</pre>
       <button id="showFiscalYear">Show current fiscal year</button>
-      <pre id="out5b"></pre>
+      <pre id="out8b"></pre>
     </section>
 
     <section class="card">
-      <h2>6. Build-your-own calendar grid</h2>
+      <h2>9. Build-your-own calendar grid</h2>
       <p><code>get_calendar_month_nep()</code> / <code>get_calendar_month_eng()</code> hand back every day of a month, in both calendars, ready to render — this mini grid below is built from nothing but that one call.</p>
       <div class="grid-2">
         <div>
@@ -88,20 +133,29 @@
       <div id="monthGrid" class="month-grid"></div>
     </section>
 
+    <section class="card card-note">
+      <h2>Accessibility &amp; positioning</h2>
+      <p>
+        <strong>Keyboard:</strong> Arrow keys navigate the day grid, Enter/Space select,
+        Page Up/Down switch months, Escape closes.<br />
+        <strong>Focus:</strong> Focus returns to the trigger on close. Tab cycles through
+        panel controls.<br />
+        <strong>ARIA:</strong> <code>role="dialog"</code>, <code>aria-modal</code>,
+        <code>aria-expanded</code>, <code>aria-selected</code>, live region for screen readers.<br />
+        <strong>Auto-flip:</strong> The panel flips above the field when there isn't
+        enough room below — try it by scrolling this card near the bottom of the viewport.
+      </p>
+    </section>
+
   </main>
 
- <!-- Footer -->
-    <footer>
-      <span
-        ><i>&copy;</i><span id="date"></span
-        ><a href="https://darpanadhikari.com.np" target="_blank">
-          DarpanAdhikari</a
-        >
-        || All right reserved</span
-      >
-    </footer>
+  <footer>
+    <span><i>&copy;</i><span id="footerYear"></span>
+    <a href="https://darpanadhikari.com.np" target="_blank">DarpanAdhikari</a>
+    || All right reserved</span>
+  </footer>
 
-  <script src="https://unpkg.com/drp-datepicker@1.0.0/dist/drp-datepicker.global.js"></script>
+  <script src="../date-calender/dist/drp-datepicker.global.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>
